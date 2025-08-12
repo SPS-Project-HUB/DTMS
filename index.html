@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Firebase Numbers Viewer</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; padding: 2rem; background:#f7f7fb; color:#111 }
+    .card { background: #fff; padding:1.2rem; border-radius:12px; box-shadow: 0 6px 18px rgba(20,20,40,0.06); max-width:700px; margin:auto }
+    h1 { margin:0 0 0.6rem 0; font-size:1.4rem }
+    .value { font-size:2.6rem; font-weight:700; margin:0.6rem 0; }
+    .small { color:#666; font-size:.9rem }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Realtime Firebase Numbers</h1>
+    <div class="small">Last value from <code>/numbers/lastNumber</code></div>
+    <div id="last" class="value">—</div>
+    <div class="small" style="margin-top:1rem">Connected: <span id="status">no</span></div>
+  </div>
+
+  <!-- Firebase v12 modules -->
+  <script type="module">
+    const firebaseConfig = {
+      apiKey: "AIzaSyDoQ0KrB6B2FHHaz4udbX9q5eURmrnqROI",
+      authDomain: "dtms-6485f.firebaseapp.com",
+      databaseURL: "https://dtms-6485f-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "dtms-6485f",
+      storageBucket: "dtms-6485f.firebasestorage.app",
+      messagingSenderId: "113375753382",
+      appId: "1:113375753382:web:98046f838c994ae41eb067"
+    };
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const lastEl = document.getElementById('last');
+    const statusEl = document.getElementById('status');
+
+    const lastRef = ref(db, '/numbers/lastNumber');
+    onValue(lastRef, snap => {
+      if (!snap.exists()) {
+        lastEl.textContent = '—';
+        statusEl.textContent = 'no data';
+        return;
+      }
+      lastEl.textContent = snap.val();
+      statusEl.textContent = 'connected';
+    }, err => {
+      statusEl.textContent = 'error';
+      console.error('Read error:', err);
+    });
+  </script>
+</body>
+</html>
