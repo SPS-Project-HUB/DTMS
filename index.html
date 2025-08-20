@@ -1,58 +1,123 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Firebase Numbers Viewer</title>
-  <style>
-    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; padding: 2rem; background:#f7f7fb; color:#111 }
-    .card { background: #fff; padding:1.2rem; border-radius:12px; box-shadow: 0 6px 18px rgba(20,20,40,0.06); max-width:700px; margin:auto }
-    h1 { margin:0 0 0.6rem 0; font-size:1.4rem }
-    .value { font-size:2.6rem; font-weight:700; margin:0.6rem 0; }
-    .small { color:#666; font-size:.9rem }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Relay System Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="card">
-    <h1>Realtime Firebase Numbers</h1>
-    <div class="small">Last value from <code>/numbers/lastNumber</code></div>
-    <div id="last" class="value">—</div>
-    <div class="small" style="margin-top:1rem">Connected: <span id="status">no</span></div>
-  </div>
+  <header>
+    <h1>Smart Relay System Dashboard</h1>
+    <p>Real-Time Monitoring of Relays, RFID Tags, Noise & Lightning</p>
+  </header>
 
-  <!-- Firebase v12 modules -->
+  <main>
+    <section class="status-cards">
+      <div class="card" id="relay1Card">
+        <h2>Relay 1</h2>
+        <p id="relay1State">Loading...</p>
+      </div>
+      <div class="card" id="relay2Card">
+        <h2>Relay 2</h2>
+        <p id="relay2State">Loading...</p>
+      </div>
+      <div class="card" id="lockCard">
+        <h2>Lock Relay</h2>
+        <p id="lockState">Loading...</p>
+      </div>
+      <div class="card" id="noiseCard">
+        <h2>Noise Level</h2>
+        <p id="noiseLevel">Loading...</p>
+      </div>
+      <div class="card" id="lightningCard">
+        <h2>Lightning</h2>
+        <p id="lightningState">Loading...</p>
+      </div>
+    </section>
+
+    <section class="events-table">
+      <h2>Event Logs</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>RFID Tag</th>
+            <th>Action</th>
+            <th>Relay 1</th>
+            <th>Relay 2</th>
+            <th>Lock Relay</th>
+            <th>Noise</th>
+            <th>Lightning</th>
+          </tr>
+        </thead>
+        <tbody id="eventsBody">
+          <tr><td colspan="8">Loading events...</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 SPS PROJECT HUB</p>
+  </footer>
+
   <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyDoQ0KrB6B2FHHaz4udbX9q5eURmrnqROI",
       authDomain: "dtms-6485f.firebaseapp.com",
       databaseURL: "https://dtms-6485f-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId: "dtms-6485f",
-      storageBucket: "dtms-6485f.firebasestorage.app",
+      storageBucket: "dtms-6485f.appspot.com",
       messagingSenderId: "113375753382",
       appId: "1:113375753382:web:98046f838c994ae41eb067"
     };
 
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    const eventsRef = ref(db, 'events');
 
-    const lastEl = document.getElementById('last');
-    const statusEl = document.getElementById('status');
+    onValue(eventsRef, (snapshot) => {
+      const data = snapshot.val();
+      const eventsBody = document.getElementById('eventsBody');
+      eventsBody.innerHTML = '';
 
-    const lastRef = ref(db, '/numbers/lastNumber');
-    onValue(lastRef, snap => {
-      if (!snap.exists()) {
-        lastEl.textContent = '—';
-        statusEl.textContent = 'no data';
+      if (!data) {
+        eventsBody.innerHTML = '<tr><td colspan="8">No events yet.</td></tr>';
         return;
       }
-      lastEl.textContent = snap.val();
-      statusEl.textContent = 'connected';
-    }, err => {
-      statusEl.textContent = 'error';
-      console.error('Read error:', err);
+
+      const keys = Object.keys(data);
+      keys.sort((a,b) => data[a].timestamp - data[b].timestamp);
+
+      keys.forEach(key => {
+        const event = data[key];
+
+        // Update cards with last state
+        document.getElementById('relay1State').textContent = event.relay1;
+        document.getElementById('relay2State').textContent = event.relay2;
+        document.getElementById('lockState').textContent = event.lock_relay;
+        document.getElementById('noiseLevel').textContent = event.noise_floor;
+        document.getElementById('lightningState').textContent = event.lightning;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${new Date(event.timestamp).toLocaleString()}</td>
+          <td>${event.last_rfid_tag}</td>
+          <td>${event.action}</td>
+          <td>${event.relay1}</td>
+          <td>${event.relay2}</td>
+          <td>${event.lock_relay}</td>
+          <td>${event.noise_floor}</td>
+          <td>${event.lightning}</td>
+        `;
+        eventsBody.appendChild(row);
+      });
     });
   </script>
 </body>
