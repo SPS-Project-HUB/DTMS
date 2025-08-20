@@ -19,75 +19,131 @@
       padding: 2rem;
       background: linear-gradient(135deg, #4a90e2, #50e3c2);
       color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
     header h1 {
       margin: 0;
-      font-size: 2rem;
+      font-size: 2.2rem;
     }
 
     header p {
       margin: 0.5rem 0 0;
       font-weight: 400;
+      font-size: 1.1rem;
     }
 
     main {
       padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .last-update {
+      font-size: 0.9rem;
+      color: #666;
+      background: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
     .status-cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 1.5rem;
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
     }
 
     .card {
       background: white;
-      padding: 1rem;
+      padding: 1.5rem;
       border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
       text-align: center;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.12);
     }
 
     .card h2 {
-      margin: 0;
+      margin: 0 0 1rem;
       font-size: 1.2rem;
       color: #4a90e2;
     }
 
     .card p {
-      margin: 0.5rem 0 0;
-      font-size: 1rem;
+      margin: 0;
+      font-size: 1.4rem;
       font-weight: 500;
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .status-on {
+      background-color: #4CAF50;
+      box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+    }
+
+    .status-off {
+      background-color: #F44336;
+      box-shadow: 0 0 8px rgba(244, 67, 54, 0.6);
+    }
+
+    .status-warning {
+      background-color: #FF9800;
+      box-shadow: 0 0 8px rgba(255, 152, 0, 0.6);
+    }
+
+    .status-normal {
+      background-color: #4CAF50;
+      box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+    }
+
+    .events-section {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .events-section h2 {
+      margin: 0 0 1.5rem;
+      color: #4a90e2;
+      font-size: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #f0f0f0;
     }
 
     .events-table {
       overflow-x: auto;
-    }
-
-    .events-table h2 {
-      margin-bottom: 1rem;
-      color: #4a90e2;
+      border-radius: 8px;
     }
 
     .events-table table {
       width: 100%;
       border-collapse: collapse;
       background: white;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
     .events-table th, .events-table td {
-      padding: 0.8rem;
+      padding: 1rem;
       text-align: center;
       border-bottom: 1px solid #eee;
     }
@@ -97,6 +153,7 @@
       color: white;
       position: sticky;
       top: 0;
+      font-weight: 500;
     }
 
     .events-table tbody tr:nth-child(even) {
@@ -109,10 +166,10 @@
 
     footer {
       text-align: center;
-      padding: 1rem;
+      padding: 1.5rem;
       background: #4a90e2;
       color: white;
-      margin-top: 2rem;
+      margin-top: 3rem;
     }
 
     .loading {
@@ -129,24 +186,27 @@
       to { transform: rotate(360deg); }
     }
 
-    .status-indicator {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      margin-right: 5px;
+    .connection-status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
     }
 
-    .status-on {
+    .connection-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .connected {
       background-color: #4CAF50;
     }
 
-    .status-off {
+    .disconnected {
       background-color: #F44336;
-    }
-
-    .status-warning {
-      background-color: #FF9800;
     }
 
     @media (max-width: 768px) {
@@ -155,8 +215,14 @@
       }
       
       .events-table th, .events-table td {
-        padding: 0.5rem;
+        padding: 0.7rem;
         font-size: 0.9rem;
+      }
+      
+      .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
       }
     }
   </style>
@@ -168,6 +234,11 @@
   </header>
 
   <main>
+    <div class="dashboard-header">
+      <h2>System Status</h2>
+      <div class="last-update">Last update: <span id="updateTime">-</span></div>
+    </div>
+
     <section class="status-cards">
       <div class="card" id="relay1Card">
         <h2>Relay 1</h2>
@@ -183,7 +254,7 @@
       </div>
       <div class="card" id="noiseCard">
         <h2>Noise Level</h2>
-        <p id="noiseLevel"><span class="status-indicator"></span>Loading...</p>
+        <p id="noiseLevel"><span class="status-indicator status-normal"></span>Loading...</p>
       </div>
       <div class="card" id="lightningCard">
         <h2>Lightning</h2>
@@ -191,35 +262,42 @@
       </div>
     </section>
 
-    <section class="events-table">
+    <section class="events-section">
       <h2>Event Logs</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Timestamp</th>
-            <th>RFID Tag</th>
-            <th>Action</th>
-            <th>Relay 1</th>
-            <th>Relay 2</th>
-            <th>Lock Relay</th>
-            <th>Noise</th>
-            <th>Lightning</th>
-          </tr>
-        </thead>
-        <tbody id="eventsBody">
-          <tr><td colspan="8"><span class="loading"></span> Loading events...</td></tr>
-        </tbody>
-      </table>
+      <div class="events-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>RFID Tag</th>
+              <th>Action</th>
+              <th>Relay 1</th>
+              <th>Relay 2</th>
+              <th>Lock Relay</th>
+              <th>Noise</th>
+              <th>Lightning</th>
+            </tr>
+          </thead>
+          <tbody id="eventsBody">
+            <tr><td colspan="8"><span class="loading"></span> Loading events...</td></tr>
+          </tbody>
+        </table>
+      </div>
     </section>
+
+    <div class="connection-status">
+      <span class="connection-dot connected" id="connectionDot"></span>
+      <span id="connectionStatus">Connected to Firebase</span>
+    </div>
   </main>
 
   <footer>
-    <p>© 2025 SPS PROJECT HUB</p>
+    <p>© 2025 SPS PROJECT HUB | Smart Relay Monitoring System</p>
   </footer>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+    import { getDatabase, ref, onValue, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
     // Firebase configuration
     const firebaseConfig = {
@@ -251,9 +329,30 @@
         if (numValue >= 4) {
           indicator.className = 'status-indicator status-warning';
         } else {
-          indicator.className = 'status-indicator status-on';
+          indicator.className = 'status-indicator status-normal';
         }
       }
+    }
+
+    // Function to format timestamp correctly
+    function formatTimestamp(timestamp) {
+      // Check if timestamp is in seconds (from ESP32) and convert to milliseconds
+      const adjustedTimestamp = timestamp < 10000000000 ? timestamp * 1000 : timestamp;
+      
+      const date = new Date(adjustedTimestamp);
+      
+      // Check if date is valid
+      if (isNaN(date.getTime())) {
+        return 'Invalid Date';
+      }
+      
+      return date.toLocaleString();
+    }
+
+    // Update last update time
+    function updateLastUpdateTime() {
+      const now = new Date();
+      document.getElementById('updateTime').textContent = now.toLocaleTimeString();
     }
 
     onValue(eventsRef, (snapshot) => {
@@ -273,11 +372,11 @@
       // Update cards with the latest state (first item in sorted array)
       const latestEvent = data[keys[0]];
       
-      document.getElementById('relay1State').innerHTML = `<span class="status-indicator"></span>${latestEvent.relay1}`;
-      document.getElementById('relay2State').innerHTML = `<span class="status-indicator"></span>${latestEvent.relay2}`;
-      document.getElementById('lockState').innerHTML = `<span class="status-indicator"></span>${latestEvent.lock_relay}`;
-      document.getElementById('noiseLevel').innerHTML = `<span class="status-indicator"></span>${latestEvent.noise_floor}`;
-      document.getElementById('lightningState').innerHTML = `<span class="status-indicator"></span>${latestEvent.lightning}`;
+      document.getElementById('relay1State').innerHTML = `<span class="status-indicator"></span>${latestEvent.relay1 || 'N/A'}`;
+      document.getElementById('relay2State').innerHTML = `<span class="status-indicator"></span>${latestEvent.relay2 || 'N/A'}`;
+      document.getElementById('lockState').innerHTML = `<span class="status-indicator"></span>${latestEvent.lock_relay || 'N/A'}`;
+      document.getElementById('noiseLevel').innerHTML = `<span class="status-indicator"></span>${latestEvent.noise_floor || 'N/A'}`;
+      document.getElementById('lightningState').innerHTML = `<span class="status-indicator"></span>${latestEvent.lightning || 'N/A'}`;
       
       // Update status indicators
       updateStatusIndicator('relay1State', latestEvent.relay1);
@@ -290,27 +389,40 @@
       keys.forEach(key => {
         const event = data[key];
         
-        // Convert timestamp correctly - assuming it's in milliseconds
-        const timestamp = new Date(event.timestamp);
-        const formattedDate = isNaN(timestamp.getTime()) ? 'Invalid Date' : timestamp.toLocaleString();
+        // Format timestamp correctly
+        const formattedDate = formatTimestamp(event.timestamp);
         
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${formattedDate}</td>
-          <td>${event.last_rfid_tag}</td>
-          <td>${event.action}</td>
-          <td>${event.relay1}</td>
-          <td>${event.relay2}</td>
-          <td>${event.lock_relay}</td>
-          <td>${event.noise_floor}</td>
-          <td>${event.lightning}</td>
+          <td>${event.last_rfid_tag || 'N/A'}</td>
+          <td>${event.action || 'N/A'}</td>
+          <td>${event.relay1 || 'N/A'}</td>
+          <td>${event.relay2 || 'N/A'}</td>
+          <td>${event.lock_relay || 'N/A'}</td>
+          <td>${event.noise_floor || 'N/A'}</td>
+          <td>${event.lightning || 'N/A'}</td>
         `;
         eventsBody.appendChild(row);
       });
+
+      // Update last update time
+      updateLastUpdateTime();
+      
+      // Update connection status
+      document.getElementById('connectionDot').className = 'connection-dot connected';
+      document.getElementById('connectionStatus').textContent = 'Connected to Firebase';
     }, (error) => {
       console.error("Firebase error:", error);
       document.getElementById('eventsBody').innerHTML = '<tr><td colspan="8">Error loading data. Please check console.</td></tr>';
+      
+      // Update connection status
+      document.getElementById('connectionDot').className = 'connection-dot disconnected';
+      document.getElementById('connectionStatus').textContent = 'Disconnected from Firebase';
     });
+
+    // Update time every minute
+    setInterval(updateLastUpdateTime, 60000);
   </script>
 </body>
 </html>
