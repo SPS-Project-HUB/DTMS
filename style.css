@@ -1,0 +1,86 @@
+body {
+  font-family: 'Roboto', sans-serif;
+  background: #f4f7f8;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #4a90e2, #50e3c2);
+  color: white;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+header p {
+  margin: 0.5rem 0 0;
+  font-weight: 400;
+}
+
+main {
+  padding: 2rem;
+}
+
+.status-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background: white;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.card h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #4a90e2;
+}
+
+.card p {
+  margin: 0.5rem 0 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.events-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.events-table th, .events-table td {
+  padding: 0.8rem;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+.events-table th {
+  background: #4a90e2;
+  color: white;
+}
+
+.events-table tbody tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  background: #4a90e2;
+  color: white;
+}
