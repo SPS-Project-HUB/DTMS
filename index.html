@@ -5,7 +5,161 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Smart Relay System Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f4f7f8;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      text-align: center;
+      padding: 2rem;
+      background: linear-gradient(135deg, #4a90e2, #50e3c2);
+      color: white;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    header p {
+      margin: 0.5rem 0 0;
+      font-weight: 400;
+    }
+
+    main {
+      padding: 2rem;
+    }
+
+    .status-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: white;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: #4a90e2;
+    }
+
+    .card p {
+      margin: 0.5rem 0 0;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    .events-table {
+      overflow-x: auto;
+    }
+
+    .events-table h2 {
+      margin-bottom: 1rem;
+      color: #4a90e2;
+    }
+
+    .events-table table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .events-table th, .events-table td {
+      padding: 0.8rem;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+
+    .events-table th {
+      background: #4a90e2;
+      color: white;
+      position: sticky;
+      top: 0;
+    }
+
+    .events-table tbody tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    .events-table tbody tr:hover {
+      background: #f1f7ff;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #4a90e2;
+      color: white;
+      margin-top: 2rem;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+
+    .status-on {
+      background-color: #4CAF50;
+    }
+
+    .status-off {
+      background-color: #F44336;
+    }
+
+    .status-warning {
+      background-color: #FF9800;
+    }
+
+    @media (max-width: 768px) {
+      .status-cards {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
+      
+      .events-table th, .events-table td {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -17,23 +171,23 @@
     <section class="status-cards">
       <div class="card" id="relay1Card">
         <h2>Relay 1</h2>
-        <p id="relay1State">Loading...</p>
+        <p id="relay1State"><span class="status-indicator status-off"></span>Loading...</p>
       </div>
       <div class="card" id="relay2Card">
         <h2>Relay 2</h2>
-        <p id="relay2State">Loading...</p>
+        <p id="relay2State"><span class="status-indicator status-off"></span>Loading...</p>
       </div>
       <div class="card" id="lockCard">
         <h2>Lock Relay</h2>
-        <p id="lockState">Loading...</p>
+        <p id="lockState"><span class="status-indicator status-off"></span>Loading...</p>
       </div>
       <div class="card" id="noiseCard">
         <h2>Noise Level</h2>
-        <p id="noiseLevel">Loading...</p>
+        <p id="noiseLevel"><span class="status-indicator"></span>Loading...</p>
       </div>
       <div class="card" id="lightningCard">
         <h2>Lightning</h2>
-        <p id="lightningState">Loading...</p>
+        <p id="lightningState"><span class="status-indicator status-off"></span>Loading...</p>
       </div>
     </section>
 
@@ -53,7 +207,7 @@
           </tr>
         </thead>
         <tbody id="eventsBody">
-          <tr><td colspan="8">Loading events...</td></tr>
+          <tr><td colspan="8"><span class="loading"></span> Loading events...</td></tr>
         </tbody>
       </table>
     </section>
@@ -82,6 +236,26 @@
     const db = getDatabase(app);
     const eventsRef = ref(db, 'events');
 
+    // Function to update status indicators
+    function updateStatusIndicator(elementId, value) {
+      const element = document.getElementById(elementId);
+      const indicator = element.querySelector('.status-indicator');
+      
+      if (value === 'ON' || value === 'YES') {
+        indicator.className = 'status-indicator status-on';
+      } else if (value === 'OFF' || value === 'NO') {
+        indicator.className = 'status-indicator status-off';
+      } else if (!isNaN(value)) {
+        // For numeric values like noise level
+        const numValue = parseInt(value);
+        if (numValue >= 4) {
+          indicator.className = 'status-indicator status-warning';
+        } else {
+          indicator.className = 'status-indicator status-on';
+        }
+      }
+    }
+
     onValue(eventsRef, (snapshot) => {
       const data = snapshot.val();
       const eventsBody = document.getElementById('eventsBody');
@@ -93,21 +267,36 @@
       }
 
       const keys = Object.keys(data);
-      keys.sort((a,b) => data[a].timestamp - data[b].timestamp);
+      // Sort by timestamp in descending order (newest first)
+      keys.sort((a, b) => data[b].timestamp - data[a].timestamp);
 
+      // Update cards with the latest state (first item in sorted array)
+      const latestEvent = data[keys[0]];
+      
+      document.getElementById('relay1State').innerHTML = `<span class="status-indicator"></span>${latestEvent.relay1}`;
+      document.getElementById('relay2State').innerHTML = `<span class="status-indicator"></span>${latestEvent.relay2}`;
+      document.getElementById('lockState').innerHTML = `<span class="status-indicator"></span>${latestEvent.lock_relay}`;
+      document.getElementById('noiseLevel').innerHTML = `<span class="status-indicator"></span>${latestEvent.noise_floor}`;
+      document.getElementById('lightningState').innerHTML = `<span class="status-indicator"></span>${latestEvent.lightning}`;
+      
+      // Update status indicators
+      updateStatusIndicator('relay1State', latestEvent.relay1);
+      updateStatusIndicator('relay2State', latestEvent.relay2);
+      updateStatusIndicator('lockState', latestEvent.lock_relay);
+      updateStatusIndicator('noiseLevel', latestEvent.noise_floor);
+      updateStatusIndicator('lightningState', latestEvent.lightning);
+
+      // Display all events in table
       keys.forEach(key => {
         const event = data[key];
-
-        // Update cards with last state
-        document.getElementById('relay1State').textContent = event.relay1;
-        document.getElementById('relay2State').textContent = event.relay2;
-        document.getElementById('lockState').textContent = event.lock_relay;
-        document.getElementById('noiseLevel').textContent = event.noise_floor;
-        document.getElementById('lightningState').textContent = event.lightning;
-
+        
+        // Convert timestamp correctly - assuming it's in milliseconds
+        const timestamp = new Date(event.timestamp);
+        const formattedDate = isNaN(timestamp.getTime()) ? 'Invalid Date' : timestamp.toLocaleString();
+        
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td>${new Date(event.timestamp).toLocaleString()}</td>
+          <td>${formattedDate}</td>
           <td>${event.last_rfid_tag}</td>
           <td>${event.action}</td>
           <td>${event.relay1}</td>
@@ -118,6 +307,9 @@
         `;
         eventsBody.appendChild(row);
       });
+    }, (error) => {
+      console.error("Firebase error:", error);
+      document.getElementById('eventsBody').innerHTML = '<tr><td colspan="8">Error loading data. Please check console.</td></tr>';
     });
   </script>
 </body>
