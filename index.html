@@ -15,28 +15,35 @@
 
     body {
       font-family: 'Roboto', sans-serif;
-      background: #f4f7f8;
-      color: #333;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
       line-height: 1.6;
+      min-height: 100vh;
     }
 
     header {
       text-align: center;
       padding: 2rem;
-      background: linear-gradient(135deg, #2c3e50, #4a90e2);
-      color: white;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     header h1 {
       margin: 0;
-      font-size: 2.2rem;
+      font-size: 2.5rem;
+      background: linear-gradient(45deg, #ff9a9e, #fad0c4, #fad0c4, #a1c4fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
 
     header p {
       margin: 0.5rem 0 0;
       font-weight: 400;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
+      color: #e0e0e0;
     }
 
     main {
@@ -52,60 +59,75 @@
       margin-bottom: 1.5rem;
       flex-wrap: wrap;
       gap: 1rem;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1rem;
+      border-radius: 16px;
+      backdrop-filter: blur(5px);
     }
 
     .last-update {
       font-size: 0.9rem;
-      color: #666;
-      background: #fff;
+      color: #b0b0b0;
+      background: rgba(0, 0, 0, 0.2);
       padding: 0.5rem 1rem;
       border-radius: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
     .system-status {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.5rem;
       margin-bottom: 2.5rem;
     }
 
     .status-card {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+      padding: 1.8rem;
+      border-radius: 20px;
       text-align: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .status-card::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      z-index: -1;
+      background: linear-gradient(45deg, #ff9a9e, #fad0c4, #a1c4fd, #c2e9fb);
+      border-radius: 22px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
 
     .status-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+      transform: translateY(-8px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .status-card:hover::before {
+      opacity: 0.3;
     }
 
     .status-card.safety-active {
-      box-shadow: 0 0 0 3px #FF9800;
+      box-shadow: 0 0 0 3px #FF9800, 0 8px 32px rgba(0, 0, 0, 0.2);
     }
 
     .status-card.safety-active::before {
-      content: "SAFETY ACTIVE";
-      position: absolute;
-      top: 0;
-      right: 0;
-      background: #FF9800;
-      color: white;
-      font-size: 0.7rem;
-      padding: 0.2rem 0.5rem;
-      border-bottom-left-radius: 8px;
+      opacity: 0.4;
     }
 
     .status-card h2 {
-      margin: 0 0 1rem;
-      font-size: 1.2rem;
-      color: #2c3e50;
+      margin: 0 0 1.2rem;
+      font-size: 1.3rem;
+      color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -114,51 +136,54 @@
 
     .status-card p {
       margin: 0;
-      font-size: 1.4rem;
-      font-weight: 500;
+      font-size: 1.6rem;
+      font-weight: 600;
     }
 
     .status-indicator {
       display: inline-block;
-      width: 14px;
-      height: 14px;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
-      margin-right: 8px;
+      margin-right: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }
 
     .status-on {
-      background-color: #4CAF50;
-      box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+      background: linear-gradient(135deg, #00f260, #0575e6);
+      box-shadow: 0 0 15px rgba(0, 242, 96, 0.5);
     }
 
     .status-off {
-      background-color: #F44336;
-      box-shadow: 0 0 8px rgba(244, 67, 54, 0.6);
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      box-shadow: 0 0 15px rgba(255, 65, 108, 0.5);
     }
 
     .status-warning {
-      background-color: #FF9800;
-      box-shadow: 0 0 8px rgba(255, 152, 0, 0.6);
+      background: linear-gradient(135deg, #f7b733, #fc4a1a);
+      box-shadow: 0 0 15px rgba(247, 183, 51, 0.5);
     }
 
     .status-normal {
-      background-color: #4CAF50;
-      box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+      background: linear-gradient(135deg, #00f260, #0575e6);
+      box-shadow: 0 0 15px rgba(0, 242, 96, 0.5);
     }
 
     .events-section {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1.8rem;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .events-section h2 {
       margin: 0 0 1.5rem;
-      color: #2c3e50;
-      font-size: 1.5rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid #f0f0f0;
+      color: #ffffff;
+      font-size: 1.6rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -166,23 +191,24 @@
 
     .events-table {
       overflow-x: auto;
-      border-radius: 8px;
+      border-radius: 12px;
     }
 
     .events-table table {
       width: 100%;
       border-collapse: collapse;
-      background: white;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
     }
 
     .events-table th, .events-table td {
-      padding: 1rem;
+      padding: 1.2rem;
       text-align: center;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .events-table th {
-      background: #2c3e50;
+      background: linear-gradient(135deg, #4a00e0, #8e2de2);
       color: white;
       position: sticky;
       top: 0;
@@ -190,44 +216,47 @@
     }
 
     .events-table tbody tr:nth-child(even) {
-      background: #f9f9f9;
+      background: rgba(255, 255, 255, 0.03);
     }
 
     .events-table tbody tr:hover {
-      background: #f1f7ff;
+      background: rgba(255, 255, 255, 0.08);
     }
 
     .safety-status {
-      background: #FFF3E0;
-      padding: 1rem;
-      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(255, 152, 0, 0.2), rgba(255, 152, 0, 0.1));
+      padding: 1.2rem;
+      border-radius: 16px;
       margin-bottom: 1.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 152, 0, 0.3);
     }
 
     .safety-status.warning {
-      background: #FFECB3;
-      border-left: 4px solid #FFC107;
+      background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 193, 7, 0.1));
+      border: 1px solid rgba(255, 193, 7, 0.3);
     }
 
     .safety-status.danger {
-      background: #FFCDD2;
-      border-left: 4px solid #F44336;
+      background: linear-gradient(135deg, rgba(244, 67, 54, 0.2), rgba(244, 67, 54, 0.1));
+      border: 1px solid rgba(244, 67, 54, 0.3);
     }
 
     .safety-status .icon {
-      font-size: 1.5rem;
-      margin-right: 1rem;
+      font-size: 1.8rem;
+      margin-right: 1.2rem;
     }
 
     footer {
       text-align: center;
-      padding: 1.5rem;
-      background: #2c3e50;
-      color: white;
+      padding: 1.8rem;
+      background: rgba(0, 0, 0, 0.3);
+      color: #b0b0b0;
       margin-top: 3rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .loading {
@@ -248,59 +277,61 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 1rem;
+      margin-top: 1.5rem;
       font-size: 0.9rem;
+      color: #b0b0b0;
     }
 
     .connection-dot {
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
-      margin-right: 8px;
+      margin-right: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }
 
     .connected {
-      background-color: #4CAF50;
+      background: linear-gradient(135deg, #00f260, #0575e6);
+      box-shadow: 0 0 10px rgba(0, 242, 96, 0.5);
     }
 
     .disconnected {
-      background-color: #F44336;
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      box-shadow: 0 0 10px rgba(255, 65, 108, 0.5);
     }
 
     .card-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
       margin-bottom: 2rem;
     }
 
     .info-card {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+      padding: 1.8rem;
+      border-radius: 20px;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     }
 
     .info-card h3 {
-      margin: 0 0 1rem;
-      color: #2c3e50;
+      margin: 0 0 1.2rem;
+      color: #ffffff;
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      font-size: 1.2rem;
     }
 
-    .loto-status {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1rem;
-      margin-top: 1rem;
+    .info-card p {
+      margin-bottom: 0.8rem;
+      color: #e0e0e0;
     }
 
-    .loto-indicator {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
+    .info-card p:last-child {
+      margin-bottom: 0;
     }
 
     @media (max-width: 768px) {
@@ -309,33 +340,51 @@
       }
       
       .events-table th, .events-table td {
-        padding: 0.7rem;
+        padding: 0.8rem;
         font-size: 0.9rem;
       }
       
       .dashboard-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 0.5rem;
+        gap: 0.8rem;
       }
       
       .safety-status {
         flex-direction: column;
         text-align: center;
-        gap: 0.5rem;
+        gap: 0.8rem;
       }
       
       .card-grid {
         grid-template-columns: 1fr;
       }
+      
+      header h1 {
+        font-size: 2rem;
+      }
+      
+      header p {
+        font-size: 1rem;
+      }
     }
 
     .event-row.safety-event {
-      background-color: #FFF9C4 !important;
+      background: rgba(255, 193, 7, 0.1) !important;
     }
 
     .event-row.safety-event:hover {
-      background-color: #FFF59D !important;
+      background: rgba(255, 193, 7, 0.2) !important;
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
     }
   </style>
 </head>
@@ -371,13 +420,9 @@
       </div>
       
       <div class="info-card">
-        <h3><i class="fas fa-key"></i> LOTO Status</h3>
-        <div class="loto-status">
-          <span>System Lock Status:</span>
-          <span class="loto-indicator" id="lotoIndicator" style="background-color: #F44336;"></span>
-          <span id="lotoStatus">Unlocked</span>
-        </div>
-        <p id="lastLotoAction" style="margin-top: 1rem; font-size: 0.9rem;">Last action: None</p>
+        <h3><i class="fas fa-history"></i> Recent Activity</h3>
+        <p id="recentActivity">System initialized and ready</p>
+        <p id="rfidStatus">No RFID tags scanned recently</p>
       </div>
     </div>
 
@@ -390,9 +435,9 @@
         <h2><i class="fas fa-plug"></i> Secondary Contactor</h2>
         <p id="contactor2State"><span class="status-indicator status-off"></span>Loading...</p>
       </div>
-      <div class="status-card" id="lotoCard">
-        <h2><i class="fas fa-lock"></i> LOTO Relay</h2>
-        <p id="lotoState"><span class="status-indicator status-off"></span>Loading...</p>
+      <div class="status-card" id="lockCard">
+        <h2><i class="fas fa-lock"></i> Lock Relay</h2>
+        <p id="lockState"><span class="status-indicator status-off"></span>Loading...</p>
       </div>
       <div class="status-card" id="noiseCard">
         <h2><i class="fas fa-volume-up"></i> Noise Level</h2>
@@ -415,7 +460,7 @@
               <th>Action</th>
               <th>Primary Contactor</th>
               <th>Secondary Contactor</th>
-              <th>LOTO Relay</th>
+              <th>Lock Relay</th>
               <th>Noise</th>
               <th>Lightning</th>
             </tr>
@@ -525,7 +570,7 @@
       const safetyElement = document.getElementById('safetyStatus');
       const contactor1Card = document.getElementById('contactor1Card');
       const contactor2Card = document.getElementById('contactor2Card');
-      const lotoCard = document.getElementById('lotoCard');
+      const lockCard = document.getElementById('lockCard');
       
       if (active) {
         safetyElement.style.display = 'flex';
@@ -536,7 +581,7 @@
         // Add safety indicator to contactor cards
         contactor1Card.classList.add('safety-active');
         contactor2Card.classList.add('safety-active');
-        lotoCard.classList.add('safety-active');
+        lockCard.classList.add('safety-active');
         
         // Start countdown if we have an end time
         if (endTime > 0) {
@@ -551,7 +596,7 @@
         // Remove safety indicator from contactor cards
         contactor1Card.classList.remove('safety-active');
         contactor2Card.classList.remove('safety-active');
-        lotoCard.classList.remove('safety-active');
+        lockCard.classList.remove('safety-active');
         
         // Clear countdown
         if (safetyInterval) {
@@ -606,13 +651,13 @@
       // Determine actual contactor states (may be overridden by safety)
       let actualContactor1 = latestEvent.relay1;
       let actualContactor2 = latestEvent.relay2;
-      let actualLotoRelay = latestEvent.lock_relay;
+      let actualLockRelay = latestEvent.lock_relay;
       
       // If this is a safety event, override the contactor states to OFF
       if (isSafetyEvent) {
         actualContactor1 = 'OFF';
         actualContactor2 = 'OFF';
-        actualLotoRelay = 'OFF';
+        actualLockRelay = 'OFF';
         
         // Calculate when safety mode should end (5 seconds from event timestamp)
         const eventTime = latestEvent.timestamp < 10000000000 ? latestEvent.timestamp * 1000 : latestEvent.timestamp;
@@ -628,30 +673,21 @@
         updateSafetyStatus(false);
       }
       
-      // Update LOTO status based on lock relay state
-      const lotoIndicator = document.getElementById('lotoIndicator');
-      const lotoStatus = document.getElementById('lotoStatus');
-      if (actualLotoRelay === 'ON') {
-        lotoIndicator.style.backgroundColor = '#4CAF50';
-        lotoStatus.textContent = 'Locked';
-        document.getElementById('lastLotoAction').textContent = `Last action: System locked by ${latestEvent.last_rfid_tag === 'SYSTEM' ? 'safety system' : 'RFID tag'}`;
-      } else {
-        lotoIndicator.style.backgroundColor = '#F44336';
-        lotoStatus.textContent = 'Unlocked';
-        document.getElementById('lastLotoAction').textContent = `Last action: System unlocked by ${latestEvent.last_rfid_tag === 'SYSTEM' ? 'safety system' : 'RFID tag'}`;
-      }
+      // Update recent activity
+      document.getElementById('recentActivity').textContent = `Last action: ${latestEvent.action}`;
+      document.getElementById('rfidStatus').textContent = `Last RFID: ${latestEvent.last_rfid_tag}`;
       
       // Update display with actual states
       document.getElementById('contactor1State').innerHTML = `<span class="status-indicator"></span>${actualContactor1 || 'N/A'}`;
       document.getElementById('contactor2State').innerHTML = `<span class="status-indicator"></span>${actualContactor2 || 'N/A'}`;
-      document.getElementById('lotoState').innerHTML = `<span class="status-indicator"></span>${actualLotoRelay || 'N/A'}`;
+      document.getElementById('lockState').innerHTML = `<span class="status-indicator"></span>${actualLockRelay || 'N/A'}`;
       document.getElementById('noiseLevel').innerHTML = `<span class="status-indicator"></span>${latestEvent.noise_floor || 'N/A'}`;
       document.getElementById('lightningState').innerHTML = `<span class="status-indicator"></span>${latestEvent.lightning || 'N/A'}`;
       
       // Update status indicators
       updateStatusIndicator('contactor1State', actualContactor1);
       updateStatusIndicator('contactor2State', actualContactor2);
-      updateStatusIndicator('lotoState', actualLotoRelay);
+      updateStatusIndicator('lockState', actualLockRelay);
       updateStatusIndicator('noiseLevel', latestEvent.noise_floor);
       updateStatusIndicator('lightningState', latestEvent.lightning);
 
@@ -676,12 +712,12 @@
         // For safety events, show the actual contactor state (OFF) instead of intended state
         let displayContactor1 = event.relay1;
         let displayContactor2 = event.relay2;
-        let displayLotoRelay = event.lock_relay;
+        let displayLockRelay = event.lock_relay;
         
         if (isSafetyRow && (event.action.includes('Noise warning') || event.action.includes('Lightning detected'))) {
           displayContactor1 = 'OFF';
           displayContactor2 = 'OFF';
-          displayLotoRelay = 'OFF';
+          displayLockRelay = 'OFF';
         }
         
         row.innerHTML = `
@@ -690,7 +726,7 @@
           <td>${event.action || 'N/A'}</td>
           <td>${displayContactor1 || 'N/A'}</td>
           <td>${displayContactor2 || 'N/A'}</td>
-          <td>${displayLotoRelay || 'N/A'}</td>
+          <td>${displayLockRelay || 'N/A'}</td>
           <td>${event.noise_floor || 'N/A'}</td>
           <td>${event.lightning || 'N/A'}</td>
         `;
