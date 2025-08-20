@@ -69,11 +69,29 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
       text-align: center;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
 
     .card:hover {
       transform: translateY(-5px);
       box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+    }
+
+    .card.safety-active {
+      box-shadow: 0 0 0 3px #FF9800;
+    }
+
+    .card.safety-active::before {
+      content: "SAFETY ACTIVE";
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: #FF9800;
+      color: white;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-bottom-left-radius: 8px;
     }
 
     .card h2 {
@@ -164,6 +182,31 @@
       background: #f1f7ff;
     }
 
+    .safety-status {
+      background: #FFF3E0;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .safety-status.warning {
+      background: #FFECB3;
+      border-left: 4px solid #FFC107;
+    }
+
+    .safety-status.danger {
+      background: #FFCDD2;
+      border-left: 4px solid #F44336;
+    }
+
+    .safety-status .icon {
+      font-size: 1.5rem;
+      margin-right: 1rem;
+    }
+
     footer {
       text-align: center;
       padding: 1.5rem;
@@ -224,6 +267,12 @@
         align-items: flex-start;
         gap: 0.5rem;
       }
+      
+      .safety-status {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+      }
     }
   </style>
 </head>
@@ -237,6 +286,17 @@
     <div class="dashboard-header">
       <h2>System Status</h2>
       <div class="last-update">Last update: <span id="updateTime">-</span></div>
+    </div>
+
+    <div id="safetyStatus" class="safety-status" style="display: none;">
+      <div style="display: flex; align-items: center;">
+        <div class="icon">⚠️</div>
+        <div>
+          <strong id="safetyTitle">Safety Mode Active</strong>
+          <div id="safetyMessage">Relays have been turned off for safety reasons</div>
+        </div>
+      </div>
+      <div id="safetyTimer">Auto-reset in: <span id="safetyCountdown">--:--</span></div>
     </div>
 
     <section class="status-cards">
@@ -292,12 +352,12 @@
   </main>
 
   <footer>
-    <p>© 2025 SPS PROJECT HUB | Smart Relay Monitoring System</p>
+    <p>© 2025 SPS PROJECT HUB | Distribution Transformer Fault and Lightning Protection System</p>
   </footer>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-    import { getDatabase, ref, onValue, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
     // Firebase configuration
     const firebaseConfig = {
@@ -313,6 +373,11 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const eventsRef = ref(db, 'events');
+
+    // Track safety status
+    let safetyActive = false;
+    let safetyEndTime = 0;
+    let safetyInterval = null;
 
     // Function to update status indicators
     function updateStatusIndicator(elementId, value) {
@@ -355,6 +420,65 @@
       document.getElementById('updateTime').textContent = now.toLocaleTimeString();
     }
 
+    // Update safety status display
+    function updateSafetyStatus(active, reason = "", endTime = 0) {
+      const safetyElement = document.getElementById('safetyStatus');
+      const relay1Card = document.getElementById('relay1Card');
+      const relay2Card = document.getElementById('relay2Card');
+      const lockCard = document.getElementById('lockCard');
+      
+      if (active) {
+        safetyElement.style.display = 'flex';
+        safetyElement.className = reason === 'lightning' ? 'safety-status danger' : 'safety-status warning';
+        document.getElementById('safetyTitle').textContent = reason === 'lightning' ? 'Lightning Detected!' : 'High Noise Level!';
+        document.getElementById('safetyMessage').textContent = 'All relays have been turned off for safety';
+        
+        // Add safety indicator to relay cards
+        relay1Card.classList.add('safety-active');
+        relay2Card.classList.add('safety-active');
+        lockCard.classList.add('safety-active');
+        
+        // Start countdown if we have an end time
+        if (endTime > 0) {
+          safetyEndTime = endTime;
+          if (safetyInterval) clearInterval(safetyInterval);
+          safetyInterval = setInterval(updateSafetyCountdown, 1000);
+          updateSafetyCountdown();
+        }
+      } else {
+        safetyElement.style.display = 'none';
+        
+        // Remove safety indicator from relay cards
+        relay1Card.classList.remove('safety-active');
+        relay2Card.classList.remove('safety-active');
+        lockCard.classList.remove('safety-active');
+        
+        // Clear countdown
+        if (safetyInterval) {
+          clearInterval(safetyInterval);
+          safetyInterval = null;
+        }
+      }
+    }
+
+    // Update safety countdown timer
+    function updateSafetyCountdown() {
+      if (safetyEndTime > 0) {
+        const now = Date.now();
+        const remaining = Math.max(0, safetyEndTime - now);
+        const seconds = Math.floor(remaining / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        
+        document.getElementById('safetyCountdown').textContent = 
+          `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        
+        if (remaining <= 0) {
+          updateSafetyStatus(false);
+        }
+      }
+    }
+
     onValue(eventsRef, (snapshot) => {
       const data = snapshot.val();
       const eventsBody = document.getElementById('eventsBody');
@@ -372,16 +496,44 @@
       // Update cards with the latest state (first item in sorted array)
       const latestEvent = data[keys[0]];
       
-      document.getElementById('relay1State').innerHTML = `<span class="status-indicator"></span>${latestEvent.relay1 || 'N/A'}`;
-      document.getElementById('relay2State').innerHTML = `<span class="status-indicator"></span>${latestEvent.relay2 || 'N/A'}`;
-      document.getElementById('lockState').innerHTML = `<span class="status-indicator"></span>${latestEvent.lock_relay || 'N/A'}`;
+      // Check if safety mode is active
+      const noiseLevel = parseInt(latestEvent.noise_floor) || 0;
+      const isLightning = latestEvent.lightning === 'YES';
+      const isNoiseWarning = noiseLevel >= 4;
+      
+      // Determine actual relay states (may be overridden by safety)
+      let actualRelay1 = latestEvent.relay1;
+      let actualRelay2 = latestEvent.relay2;
+      let actualLockRelay = latestEvent.lock_relay;
+      
+      if (isLightning || isNoiseWarning) {
+        // Override relay states to OFF if safety condition is active
+        actualRelay1 = 'OFF';
+        actualRelay2 = 'OFF';
+        actualLockRelay = 'OFF';
+        
+        // Calculate when safety mode should end (5 seconds from event timestamp)
+        const eventTime = latestEvent.timestamp < 10000000000 ? latestEvent.timestamp * 1000 : latestEvent.timestamp;
+        const safetyEnd = eventTime + 5000;
+        
+        // Show safety status
+        updateSafetyStatus(true, isLightning ? 'lightning' : 'noise', safetyEnd);
+      } else {
+        // Safety mode not active
+        updateSafetyStatus(false);
+      }
+      
+      // Update display with actual states
+      document.getElementById('relay1State').innerHTML = `<span class="status-indicator"></span>${actualRelay1 || 'N/A'}`;
+      document.getElementById('relay2State').innerHTML = `<span class="status-indicator"></span>${actualRelay2 || 'N/A'}`;
+      document.getElementById('lockState').innerHTML = `<span class="status-indicator"></span>${actualLockRelay || 'N/A'}`;
       document.getElementById('noiseLevel').innerHTML = `<span class="status-indicator"></span>${latestEvent.noise_floor || 'N/A'}`;
       document.getElementById('lightningState').innerHTML = `<span class="status-indicator"></span>${latestEvent.lightning || 'N/A'}`;
       
       // Update status indicators
-      updateStatusIndicator('relay1State', latestEvent.relay1);
-      updateStatusIndicator('relay2State', latestEvent.relay2);
-      updateStatusIndicator('lockState', latestEvent.lock_relay);
+      updateStatusIndicator('relay1State', actualRelay1);
+      updateStatusIndicator('relay2State', actualRelay2);
+      updateStatusIndicator('lockState', actualLockRelay);
       updateStatusIndicator('noiseLevel', latestEvent.noise_floor);
       updateStatusIndicator('lightningState', latestEvent.lightning);
 
