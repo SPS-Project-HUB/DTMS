@@ -6,12 +6,17 @@
   <title>Smart Relay System Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: 'Roboto', sans-serif;
       background: #f4f7f8;
       color: #333;
-      margin: 0;
-      padding: 0;
+      line-height: 1.6;
     }
 
     header {
@@ -44,6 +49,8 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
     .last-update {
@@ -274,6 +281,14 @@
         gap: 0.5rem;
       }
     }
+
+    .event-row.safety-event {
+      background-color: #FFF9C4 !important;
+    }
+
+    .event-row.safety-event:hover {
+      background-color: #FFF59D !important;
+    }
   </style>
 </head>
 <body>
@@ -500,14 +515,16 @@
       const noiseLevel = parseInt(latestEvent.noise_floor) || 0;
       const isLightning = latestEvent.lightning === 'YES';
       const isNoiseWarning = noiseLevel >= 4;
+      const isSafetyEvent = latestEvent.action.includes('Noise warning') || 
+                           latestEvent.action.includes('Lightning detected');
       
       // Determine actual relay states (may be overridden by safety)
       let actualRelay1 = latestEvent.relay1;
       let actualRelay2 = latestEvent.relay2;
       let actualLockRelay = latestEvent.lock_relay;
       
-      if (isLightning || isNoiseWarning) {
-        // Override relay states to OFF if safety condition is active
+      // If this is a safety event, override the relay states to OFF
+      if (isSafetyEvent) {
         actualRelay1 = 'OFF';
         actualRelay2 = 'OFF';
         actualLockRelay = 'OFF';
@@ -518,6 +535,9 @@
         
         // Show safety status
         updateSafetyStatus(true, isLightning ? 'lightning' : 'noise', safetyEnd);
+      } else if (latestEvent.action.includes('Noise normalized')) {
+        // Safety mode no longer active
+        updateSafetyStatus(false);
       } else {
         // Safety mode not active
         updateSafetyStatus(false);
@@ -545,13 +565,34 @@
         const formattedDate = formatTimestamp(event.timestamp);
         
         const row = document.createElement('tr');
+        
+        // Check if this is a safety event
+        const isSafetyRow = event.action.includes('Noise warning') || 
+                           event.action.includes('Lightning detected') ||
+                           event.action.includes('Noise normalized');
+        
+        if (isSafetyRow) {
+          row.classList.add('event-row', 'safety-event');
+        }
+        
+        // For safety events, show the actual relay state (OFF) instead of intended state
+        let displayRelay1 = event.relay1;
+        let displayRelay2 = event.relay2;
+        let displayLockRelay = event.lock_relay;
+        
+        if (isSafetyRow && (event.action.includes('Noise warning') || event.action.includes('Lightning detected'))) {
+          displayRelay1 = 'OFF';
+          displayRelay2 = 'OFF';
+          displayLockRelay = 'OFF';
+        }
+        
         row.innerHTML = `
           <td>${formattedDate}</td>
           <td>${event.last_rfid_tag || 'N/A'}</td>
           <td>${event.action || 'N/A'}</td>
-          <td>${event.relay1 || 'N/A'}</td>
-          <td>${event.relay2 || 'N/A'}</td>
-          <td>${event.lock_relay || 'N/A'}</td>
+          <td>${displayRelay1 || 'N/A'}</td>
+          <td>${displayRelay2 || 'N/A'}</td>
+          <td>${displayLockRelay || 'N/A'}</td>
           <td>${event.noise_floor || 'N/A'}</td>
           <td>${event.lightning || 'N/A'}</td>
         `;
