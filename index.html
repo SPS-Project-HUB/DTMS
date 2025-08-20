@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart Relay System Dashboard</title>
+  <title>Smart DTMS & LP Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
       box-sizing: border-box;
@@ -22,7 +23,7 @@
     header {
       text-align: center;
       padding: 2rem;
-      background: linear-gradient(135deg, #4a90e2, #50e3c2);
+      background: linear-gradient(135deg, #2c3e50, #4a90e2);
       color: white;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
@@ -62,14 +63,14 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
-    .status-cards {
+    .system-status {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
       margin-bottom: 2.5rem;
     }
 
-    .card {
+    .status-card {
       background: white;
       padding: 1.5rem;
       border-radius: 12px;
@@ -80,16 +81,16 @@
       overflow: hidden;
     }
 
-    .card:hover {
+    .status-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 8px 16px rgba(0,0,0,0.12);
     }
 
-    .card.safety-active {
+    .status-card.safety-active {
       box-shadow: 0 0 0 3px #FF9800;
     }
 
-    .card.safety-active::before {
+    .status-card.safety-active::before {
       content: "SAFETY ACTIVE";
       position: absolute;
       top: 0;
@@ -101,13 +102,17 @@
       border-bottom-left-radius: 8px;
     }
 
-    .card h2 {
+    .status-card h2 {
       margin: 0 0 1rem;
       font-size: 1.2rem;
-      color: #4a90e2;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
     }
 
-    .card p {
+    .status-card p {
       margin: 0;
       font-size: 1.4rem;
       font-weight: 500;
@@ -150,10 +155,13 @@
 
     .events-section h2 {
       margin: 0 0 1.5rem;
-      color: #4a90e2;
+      color: #2c3e50;
       font-size: 1.5rem;
       padding-bottom: 0.5rem;
       border-bottom: 2px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .events-table {
@@ -174,7 +182,7 @@
     }
 
     .events-table th {
-      background: #4a90e2;
+      background: #2c3e50;
       color: white;
       position: sticky;
       top: 0;
@@ -217,7 +225,7 @@
     footer {
       text-align: center;
       padding: 1.5rem;
-      background: #4a90e2;
+      background: #2c3e50;
       color: white;
       margin-top: 3rem;
     }
@@ -259,9 +267,45 @@
       background-color: #F44336;
     }
 
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .info-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .info-card h3 {
+      margin: 0 0 1rem;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .loto-status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .loto-indicator {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+    }
+
     @media (max-width: 768px) {
-      .status-cards {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      .system-status {
+        grid-template-columns: 1fr;
       }
       
       .events-table th, .events-table td {
@@ -280,6 +324,10 @@
         text-align: center;
         gap: 0.5rem;
       }
+      
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .event-row.safety-event {
@@ -293,13 +341,13 @@
 </head>
 <body>
   <header>
-    <h1>Smart Relay System Dashboard</h1>
-    <p>Real-Time Monitoring of Relays, RFID Tags, Noise & Lightning</p>
+    <h1><i class="fas fa-bolt"></i> Smart DTMS & LP Dashboard</h1>
+    <p>Real-Time Monitoring of CONTACTOR, RFID BASED LOTO, Noise & Lightning PROTECTION</p>
   </header>
 
   <main>
     <div class="dashboard-header">
-      <h2>System Status</h2>
+      <h2><i class="fas fa-tachometer-alt"></i> System Status</h2>
       <div class="last-update">Last update: <span id="updateTime">-</span></div>
     </div>
 
@@ -308,37 +356,56 @@
         <div class="icon">⚠️</div>
         <div>
           <strong id="safetyTitle">Safety Mode Active</strong>
-          <div id="safetyMessage">Relays have been turned off for safety reasons</div>
+          <div id="safetyMessage">Contactors have been turned off for safety reasons</div>
         </div>
       </div>
       <div id="safetyTimer">Auto-reset in: <span id="safetyCountdown">--:--</span></div>
     </div>
 
-    <section class="status-cards">
-      <div class="card" id="relay1Card">
-        <h2>Relay 1</h2>
-        <p id="relay1State"><span class="status-indicator status-off"></span>Loading...</p>
+    <div class="card-grid">
+      <div class="info-card">
+        <h3><i class="fas fa-info-circle"></i> System Info</h3>
+        <p><strong>DTMS:</strong> Dynamic Transfer Monitoring System</p>
+        <p><strong>LP:</strong> Lightning Protection System</p>
+        <p><strong>LOTO:</strong> Lockout-Tagout with RFID Authentication</p>
       </div>
-      <div class="card" id="relay2Card">
-        <h2>Relay 2</h2>
-        <p id="relay2State"><span class="status-indicator status-off"></span>Loading...</p>
+      
+      <div class="info-card">
+        <h3><i class="fas fa-key"></i> LOTO Status</h3>
+        <div class="loto-status">
+          <span>System Lock Status:</span>
+          <span class="loto-indicator" id="lotoIndicator" style="background-color: #F44336;"></span>
+          <span id="lotoStatus">Unlocked</span>
+        </div>
+        <p id="lastLotoAction" style="margin-top: 1rem; font-size: 0.9rem;">Last action: None</p>
       </div>
-      <div class="card" id="lockCard">
-        <h2>Lock Relay</h2>
-        <p id="lockState"><span class="status-indicator status-off"></span>Loading...</p>
+    </div>
+
+    <section class="system-status">
+      <div class="status-card" id="contactor1Card">
+        <h2><i class="fas fa-plug"></i> Primary Contactor</h2>
+        <p id="contactor1State"><span class="status-indicator status-off"></span>Loading...</p>
       </div>
-      <div class="card" id="noiseCard">
-        <h2>Noise Level</h2>
+      <div class="status-card" id="contactor2Card">
+        <h2><i class="fas fa-plug"></i> Secondary Contactor</h2>
+        <p id="contactor2State"><span class="status-indicator status-off"></span>Loading...</p>
+      </div>
+      <div class="status-card" id="lotoCard">
+        <h2><i class="fas fa-lock"></i> LOTO Relay</h2>
+        <p id="lotoState"><span class="status-indicator status-off"></span>Loading...</p>
+      </div>
+      <div class="status-card" id="noiseCard">
+        <h2><i class="fas fa-volume-up"></i> Noise Level</h2>
         <p id="noiseLevel"><span class="status-indicator status-normal"></span>Loading...</p>
       </div>
-      <div class="card" id="lightningCard">
-        <h2>Lightning</h2>
+      <div class="status-card" id="lightningCard">
+        <h2><i class="fas fa-bolt"></i> Lightning Protection</h2>
         <p id="lightningState"><span class="status-indicator status-off"></span>Loading...</p>
       </div>
     </section>
 
     <section class="events-section">
-      <h2>Event Logs</h2>
+      <h2><i class="fas fa-history"></i> Event Logs</h2>
       <div class="events-table">
         <table>
           <thead>
@@ -346,9 +413,9 @@
               <th>Timestamp</th>
               <th>RFID Tag</th>
               <th>Action</th>
-              <th>Relay 1</th>
-              <th>Relay 2</th>
-              <th>Lock Relay</th>
+              <th>Primary Contactor</th>
+              <th>Secondary Contactor</th>
+              <th>LOTO Relay</th>
               <th>Noise</th>
               <th>Lightning</th>
             </tr>
@@ -362,32 +429,50 @@
 
     <div class="connection-status">
       <span class="connection-dot connected" id="connectionDot"></span>
-      <span id="connectionStatus">Connected to Firebase</span>
+      <span id="connectionStatus">Connected to Monitoring System</span>
     </div>
   </main>
 
   <footer>
-    <p>© 2025 SPS PROJECT HUB | Smart Relay Monitoring System</p>
+    <p>© 2025 SPS PROJECT HUB | Smart DTMS & Lightning Protection System</p>
   </footer>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-
-    // Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyDoQ0KrB6B2FHHaz4udbX9q5eURmrnqROI",
-      authDomain: "dtms-6485f.firebaseapp.com",
-      databaseURL: "https://dtms-6485f-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "dtms-6485f",
-      storageBucket: "dtms-6485f.appspot.com",
-      messagingSenderId: "113375753382",
-      appId: "1:113375753382:web:98046f838c994ae41eb067"
+    // Simulated data for demonstration purposes
+    const simulateData = {
+      events: {
+        event1: {
+          timestamp: Date.now() / 1000 - 60,
+          last_rfid_tag: "4E00233F92C0",
+          action: "TNEB turned ON system",
+          relay1: "ON",
+          relay2: "ON",
+          lock_relay: "OFF",
+          noise_floor: 2,
+          lightning: "NO"
+        },
+        event2: {
+          timestamp: Date.now() / 1000 - 30,
+          last_rfid_tag: "SYSTEM",
+          action: "Noise warning - contactors OFF",
+          relay1: "ON",
+          relay2: "ON",
+          lock_relay: "OFF",
+          noise_floor: 5,
+          lightning: "NO"
+        },
+        event3: {
+          timestamp: Date.now() / 1000,
+          last_rfid_tag: "SYSTEM",
+          action: "Noise normalized - contactors restored",
+          relay1: "ON",
+          relay2: "ON",
+          lock_relay: "OFF",
+          noise_floor: 2,
+          lightning: "NO"
+        }
+      }
     };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const eventsRef = ref(db, 'events');
 
     // Track safety status
     let safetyActive = false;
@@ -416,7 +501,7 @@
 
     // Function to format timestamp correctly
     function formatTimestamp(timestamp) {
-      // Check if timestamp is in seconds (from ESP32) and convert to milliseconds
+      // Check if timestamp is in seconds and convert to milliseconds
       const adjustedTimestamp = timestamp < 10000000000 ? timestamp * 1000 : timestamp;
       
       const date = new Date(adjustedTimestamp);
@@ -438,20 +523,20 @@
     // Update safety status display
     function updateSafetyStatus(active, reason = "", endTime = 0) {
       const safetyElement = document.getElementById('safetyStatus');
-      const relay1Card = document.getElementById('relay1Card');
-      const relay2Card = document.getElementById('relay2Card');
-      const lockCard = document.getElementById('lockCard');
+      const contactor1Card = document.getElementById('contactor1Card');
+      const contactor2Card = document.getElementById('contactor2Card');
+      const lotoCard = document.getElementById('lotoCard');
       
       if (active) {
         safetyElement.style.display = 'flex';
         safetyElement.className = reason === 'lightning' ? 'safety-status danger' : 'safety-status warning';
         document.getElementById('safetyTitle').textContent = reason === 'lightning' ? 'Lightning Detected!' : 'High Noise Level!';
-        document.getElementById('safetyMessage').textContent = 'All relays have been turned off for safety';
+        document.getElementById('safetyMessage').textContent = 'Contactors have been turned off for safety';
         
-        // Add safety indicator to relay cards
-        relay1Card.classList.add('safety-active');
-        relay2Card.classList.add('safety-active');
-        lockCard.classList.add('safety-active');
+        // Add safety indicator to contactor cards
+        contactor1Card.classList.add('safety-active');
+        contactor2Card.classList.add('safety-active');
+        lotoCard.classList.add('safety-active');
         
         // Start countdown if we have an end time
         if (endTime > 0) {
@@ -463,10 +548,10 @@
       } else {
         safetyElement.style.display = 'none';
         
-        // Remove safety indicator from relay cards
-        relay1Card.classList.remove('safety-active');
-        relay2Card.classList.remove('safety-active');
-        lockCard.classList.remove('safety-active');
+        // Remove safety indicator from contactor cards
+        contactor1Card.classList.remove('safety-active');
+        contactor2Card.classList.remove('safety-active');
+        lotoCard.classList.remove('safety-active');
         
         // Clear countdown
         if (safetyInterval) {
@@ -494,8 +579,8 @@
       }
     }
 
-    onValue(eventsRef, (snapshot) => {
-      const data = snapshot.val();
+    // Function to update the dashboard with data
+    function updateDashboard(data) {
       const eventsBody = document.getElementById('eventsBody');
       eventsBody.innerHTML = '';
 
@@ -518,16 +603,16 @@
       const isSafetyEvent = latestEvent.action.includes('Noise warning') || 
                            latestEvent.action.includes('Lightning detected');
       
-      // Determine actual relay states (may be overridden by safety)
-      let actualRelay1 = latestEvent.relay1;
-      let actualRelay2 = latestEvent.relay2;
-      let actualLockRelay = latestEvent.lock_relay;
+      // Determine actual contactor states (may be overridden by safety)
+      let actualContactor1 = latestEvent.relay1;
+      let actualContactor2 = latestEvent.relay2;
+      let actualLotoRelay = latestEvent.lock_relay;
       
-      // If this is a safety event, override the relay states to OFF
+      // If this is a safety event, override the contactor states to OFF
       if (isSafetyEvent) {
-        actualRelay1 = 'OFF';
-        actualRelay2 = 'OFF';
-        actualLockRelay = 'OFF';
+        actualContactor1 = 'OFF';
+        actualContactor2 = 'OFF';
+        actualLotoRelay = 'OFF';
         
         // Calculate when safety mode should end (5 seconds from event timestamp)
         const eventTime = latestEvent.timestamp < 10000000000 ? latestEvent.timestamp * 1000 : latestEvent.timestamp;
@@ -543,17 +628,30 @@
         updateSafetyStatus(false);
       }
       
+      // Update LOTO status based on lock relay state
+      const lotoIndicator = document.getElementById('lotoIndicator');
+      const lotoStatus = document.getElementById('lotoStatus');
+      if (actualLotoRelay === 'ON') {
+        lotoIndicator.style.backgroundColor = '#4CAF50';
+        lotoStatus.textContent = 'Locked';
+        document.getElementById('lastLotoAction').textContent = `Last action: System locked by ${latestEvent.last_rfid_tag === 'SYSTEM' ? 'safety system' : 'RFID tag'}`;
+      } else {
+        lotoIndicator.style.backgroundColor = '#F44336';
+        lotoStatus.textContent = 'Unlocked';
+        document.getElementById('lastLotoAction').textContent = `Last action: System unlocked by ${latestEvent.last_rfid_tag === 'SYSTEM' ? 'safety system' : 'RFID tag'}`;
+      }
+      
       // Update display with actual states
-      document.getElementById('relay1State').innerHTML = `<span class="status-indicator"></span>${actualRelay1 || 'N/A'}`;
-      document.getElementById('relay2State').innerHTML = `<span class="status-indicator"></span>${actualRelay2 || 'N/A'}`;
-      document.getElementById('lockState').innerHTML = `<span class="status-indicator"></span>${actualLockRelay || 'N/A'}`;
+      document.getElementById('contactor1State').innerHTML = `<span class="status-indicator"></span>${actualContactor1 || 'N/A'}`;
+      document.getElementById('contactor2State').innerHTML = `<span class="status-indicator"></span>${actualContactor2 || 'N/A'}`;
+      document.getElementById('lotoState').innerHTML = `<span class="status-indicator"></span>${actualLotoRelay || 'N/A'}`;
       document.getElementById('noiseLevel').innerHTML = `<span class="status-indicator"></span>${latestEvent.noise_floor || 'N/A'}`;
       document.getElementById('lightningState').innerHTML = `<span class="status-indicator"></span>${latestEvent.lightning || 'N/A'}`;
       
       // Update status indicators
-      updateStatusIndicator('relay1State', actualRelay1);
-      updateStatusIndicator('relay2State', actualRelay2);
-      updateStatusIndicator('lockState', actualLockRelay);
+      updateStatusIndicator('contactor1State', actualContactor1);
+      updateStatusIndicator('contactor2State', actualContactor2);
+      updateStatusIndicator('lotoState', actualLotoRelay);
       updateStatusIndicator('noiseLevel', latestEvent.noise_floor);
       updateStatusIndicator('lightningState', latestEvent.lightning);
 
@@ -575,24 +673,24 @@
           row.classList.add('event-row', 'safety-event');
         }
         
-        // For safety events, show the actual relay state (OFF) instead of intended state
-        let displayRelay1 = event.relay1;
-        let displayRelay2 = event.relay2;
-        let displayLockRelay = event.lock_relay;
+        // For safety events, show the actual contactor state (OFF) instead of intended state
+        let displayContactor1 = event.relay1;
+        let displayContactor2 = event.relay2;
+        let displayLotoRelay = event.lock_relay;
         
         if (isSafetyRow && (event.action.includes('Noise warning') || event.action.includes('Lightning detected'))) {
-          displayRelay1 = 'OFF';
-          displayRelay2 = 'OFF';
-          displayLockRelay = 'OFF';
+          displayContactor1 = 'OFF';
+          displayContactor2 = 'OFF';
+          displayLotoRelay = 'OFF';
         }
         
         row.innerHTML = `
           <td>${formattedDate}</td>
           <td>${event.last_rfid_tag || 'N/A'}</td>
           <td>${event.action || 'N/A'}</td>
-          <td>${displayRelay1 || 'N/A'}</td>
-          <td>${displayRelay2 || 'N/A'}</td>
-          <td>${displayLockRelay || 'N/A'}</td>
+          <td>${displayContactor1 || 'N/A'}</td>
+          <td>${displayContactor2 || 'N/A'}</td>
+          <td>${displayLotoRelay || 'N/A'}</td>
           <td>${event.noise_floor || 'N/A'}</td>
           <td>${event.lightning || 'N/A'}</td>
         `;
@@ -604,15 +702,35 @@
       
       // Update connection status
       document.getElementById('connectionDot').className = 'connection-dot connected';
-      document.getElementById('connectionStatus').textContent = 'Connected to Firebase';
-    }, (error) => {
-      console.error("Firebase error:", error);
-      document.getElementById('eventsBody').innerHTML = '<tr><td colspan="8">Error loading data. Please check console.</td></tr>';
-      
-      // Update connection status
-      document.getElementById('connectionDot').className = 'connection-dot disconnected';
-      document.getElementById('connectionStatus').textContent = 'Disconnected from Firebase';
-    });
+      document.getElementById('connectionStatus').textContent = 'Connected to Monitoring System';
+    }
+
+    // Initialize the dashboard with simulated data
+    updateDashboard(simulateData.events);
+
+    // Simulate real-time updates
+    setInterval(() => {
+      // Add a new random event occasionally
+      if (Math.random() > 0.7) {
+        const newEvent = {
+          timestamp: Date.now() / 1000,
+          last_rfid_tag: Math.random() > 0.5 ? "4E00233F92C0" : "4E0023287431",
+          action: Math.random() > 0.5 ? "RFID access granted" : "System status check",
+          relay1: Math.random() > 0.3 ? "ON" : "OFF",
+          relay2: Math.random() > 0.3 ? "ON" : "OFF",
+          lock_relay: Math.random() > 0.7 ? "ON" : "OFF",
+          noise_floor: Math.floor(Math.random() * 7),
+          lightning: Math.random() > 0.9 ? "YES" : "NO"
+        };
+        
+        // Add to simulated data
+        const newKey = 'event' + (Object.keys(simulateData.events).length + 1);
+        simulateData.events[newKey] = newEvent;
+        
+        // Update dashboard
+        updateDashboard(simulateData.events);
+      }
+    }, 5000);
 
     // Update time every minute
     setInterval(updateLastUpdateTime, 60000);
