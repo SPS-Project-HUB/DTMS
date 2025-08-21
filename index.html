@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart DTMS & LP Dashboard</title>
+  <title>Smart Relay System Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
       box-sizing: border-box;
@@ -15,35 +14,28 @@
 
     body {
       font-family: 'Roboto', sans-serif;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      color: #fff;
+      background: #f4f7f8;
+      color: #333;
       line-height: 1.6;
-      min-height: 100vh;
     }
 
     header {
       text-align: center;
       padding: 2rem;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      background: linear-gradient(135deg, #4a90e2, #50e3c2);
+      color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
     header h1 {
       margin: 0;
-      font-size: 2.5rem;
-      background: linear-gradient(45deg, #ff9a9e, #fad0c4, #fad0c4, #a1c4fd);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      font-size: 2.2rem;
     }
 
     header p {
       margin: 0.5rem 0 0;
       font-weight: 400;
-      font-size: 1.2rem;
-      color: #e0e0e0;
+      font-size: 1.1rem;
     }
 
     main {
@@ -59,156 +51,130 @@
       margin-bottom: 1.5rem;
       flex-wrap: wrap;
       gap: 1rem;
-      background: rgba(255, 255, 255, 0.08);
-      padding: 1rem;
-      border-radius: 16px;
-      backdrop-filter: blur(5px);
     }
 
     .last-update {
       font-size: 0.9rem;
-      color: #b0b0b0;
-      background: rgba(0, 0, 0, 0.2);
+      color: #666;
+      background: #fff;
       padding: 0.5rem 1rem;
       border-radius: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
-    .system-status {
+    .status-cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 1.5rem;
       margin-bottom: 2.5rem;
     }
 
-    .status-card {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-      padding: 1.8rem;
-      border-radius: 20px;
+    .card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
       text-align: center;
-      transition: all 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
       position: relative;
       overflow: hidden;
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     }
 
-    .status-card::before {
-      content: '';
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+    }
+
+    .card.safety-active {
+      box-shadow: 0 0 0 3px #FF9800;
+    }
+
+    .card.safety-active::before {
+      content: "SAFETY ACTIVE";
       position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
-      bottom: -2px;
-      z-index: -1;
-      background: linear-gradient(45deg, #ff9a9e, #fad0c4, #a1c4fd, #c2e9fb);
-      border-radius: 22px;
-      opacity: 0;
-      transition: opacity 0.3s ease;
+      top: 0;
+      right: 0;
+      background: #FF9800;
+      color: white;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-bottom-left-radius: 8px;
     }
 
-    .status-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    .card h2 {
+      margin: 0 0 1rem;
+      font-size: 1.2rem;
+      color: #4a90e2;
     }
 
-    .status-card:hover::before {
-      opacity: 0.3;
-    }
-
-    .status-card.safety-active {
-      box-shadow: 0 0 0 3px #FF9800, 0 8px 32px rgba(0, 0, 0, 0.2);
-    }
-
-    .status-card.safety-active::before {
-      opacity: 0.4;
-    }
-
-    .status-card h2 {
-      margin: 0 0 1.2rem;
-      font-size: 1.3rem;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .status-card p {
+    .card p {
       margin: 0;
-      font-size: 1.6rem;
-      font-weight: 600;
+      font-size: 1.4rem;
+      font-weight: 500;
     }
 
     .status-indicator {
       display: inline-block;
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
-      margin-right: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      margin-right: 8px;
     }
 
     .status-on {
-      background: linear-gradient(135deg, #00f260, #0575e6);
-      box-shadow: 0 0 15px rgba(0, 242, 96, 0.5);
+      background-color: #4CAF50;
+      box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
     }
 
     .status-off {
-      background: linear-gradient(135deg, #ff416c, #ff4b2b);
-      box-shadow: 0 0 15px rgba(255, 65, 108, 0.5);
+      background-color: #F44336;
+      box-shadow: 0 0 8px rgba(244, 67, 54, 0.6);
     }
 
     .status-warning {
-      background: linear-gradient(135deg, #f7b733, #fc4a1a);
-      box-shadow: 0 0 15px rgba(247, 183, 51, 0.5);
+      background-color: #FF9800;
+      box-shadow: 0 0 8px rgba(255, 152, 0, 0.6);
     }
 
     .status-normal {
-      background: linear-gradient(135deg, #00f260, #0575e6);
-      box-shadow: 0 0 15px rgba(0, 242, 96, 0.5);
+      background-color: #4CAF50;
+      box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
     }
 
     .events-section {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 1.8rem;
-      border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
     .events-section h2 {
       margin: 0 0 1.5rem;
-      color: #ffffff;
-      font-size: 1.6rem;
-      padding-bottom: 0.8rem;
-      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      color: #4a90e2;
+      font-size: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #f0f0f0;
     }
 
     .events-table {
       overflow-x: auto;
-      border-radius: 12px;
+      border-radius: 8px;
     }
 
     .events-table table {
       width: 100%;
       border-collapse: collapse;
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: 12px;
+      background: white;
     }
 
     .events-table th, .events-table td {
-      padding: 1.2rem;
+      padding: 1rem;
       text-align: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid #eee;
     }
 
     .events-table th {
-      background: linear-gradient(135deg, #4a00e0, #8e2de2);
+      background: #4a90e2;
       color: white;
       position: sticky;
       top: 0;
@@ -216,47 +182,44 @@
     }
 
     .events-table tbody tr:nth-child(even) {
-      background: rgba(255, 255, 255, 0.03);
+      background: #f9f9f9;
     }
 
     .events-table tbody tr:hover {
-      background: rgba(255, 255, 255, 0.08);
+      background: #f1f7ff;
     }
 
     .safety-status {
-      background: linear-gradient(135deg, rgba(255, 152, 0, 0.2), rgba(255, 152, 0, 0.1));
-      padding: 1.2rem;
-      border-radius: 16px;
+      background: #FFF3E0;
+      padding: 1rem;
+      border-radius: 8px;
       margin-bottom: 1.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(255, 152, 0, 0.3);
     }
 
     .safety-status.warning {
-      background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 193, 7, 0.1));
-      border: 1px solid rgba(255, 193, 7, 0.3);
+      background: #FFECB3;
+      border-left: 4px solid #FFC107;
     }
 
     .safety-status.danger {
-      background: linear-gradient(135deg, rgba(244, 67, 54, 0.2), rgba(244, 67, 54, 0.1));
-      border: 1px solid rgba(244, 67, 54, 0.3);
+      background: #FFCDD2;
+      border-left: 4px solid #F44336;
     }
 
     .safety-status .icon {
-      font-size: 1.8rem;
-      margin-right: 1.2rem;
+      font-size: 1.5rem;
+      margin-right: 1rem;
     }
 
     footer {
       text-align: center;
-      padding: 1.8rem;
-      background: rgba(0, 0, 0, 0.3);
-      color: #b0b0b0;
+      padding: 1.5rem;
+      background: #4a90e2;
+      color: white;
       margin-top: 3rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .loading {
@@ -277,126 +240,66 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 1.5rem;
+      margin-top: 1rem;
       font-size: 0.9rem;
-      color: #b0b0b0;
     }
 
     .connection-dot {
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
-      margin-right: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      margin-right: 8px;
     }
 
     .connected {
-      background: linear-gradient(135deg, #00f260, #0575e6);
-      box-shadow: 0 0 10px rgba(0, 242, 96, 0.5);
+      background-color: #4CAF50;
     }
 
     .disconnected {
-      background: linear-gradient(135deg, #ff416c, #ff4b2b);
-      box-shadow: 0 0 10px rgba(255, 65, 108, 0.5);
-    }
-
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .info-card {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-      padding: 1.8rem;
-      border-radius: 20px;
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    }
-
-    .info-card h3 {
-      margin: 0 0 1.2rem;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 1.2rem;
-    }
-
-    .info-card p {
-      margin-bottom: 0.8rem;
-      color: #e0e0e0;
-    }
-
-    .info-card p:last-child {
-      margin-bottom: 0;
+      background-color: #F44336;
     }
 
     @media (max-width: 768px) {
-      .system-status {
-        grid-template-columns: 1fr;
+      .status-cards {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       }
       
       .events-table th, .events-table td {
-        padding: 0.8rem;
+        padding: 0.7rem;
         font-size: 0.9rem;
       }
       
       .dashboard-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 0.8rem;
+        gap: 0.5rem;
       }
       
       .safety-status {
         flex-direction: column;
         text-align: center;
-        gap: 0.8rem;
-      }
-      
-      .card-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      header h1 {
-        font-size: 2rem;
-      }
-      
-      header p {
-        font-size: 1rem;
+        gap: 0.5rem;
       }
     }
 
     .event-row.safety-event {
-      background: rgba(255, 193, 7, 0.1) !important;
+      background-color: #FFF9C4 !important;
     }
 
     .event-row.safety-event:hover {
-      background: rgba(255, 193, 7, 0.2) !important;
-    }
-
-    .pulse {
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
+      background-color: #FFF59D !important;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1><i class="fas fa-bolt"></i> Smart DTMS & LP Dashboard</h1>
-    <p>Real-Time Monitoring of CONTACTOR, RFID BASED LOTO, Noise & Lightning PROTECTION</p>
+    <h1>Smart Relay System Dashboard</h1>
+    <p>Real-Time Monitoring of Relays, RFID Tags, Noise & Lightning</p>
   </header>
 
   <main>
     <div class="dashboard-header">
-      <h2><i class="fas fa-tachometer-alt"></i> System Status</h2>
+      <h2>System Status</h2>
       <div class="last-update">Last update: <span id="updateTime">-</span></div>
     </div>
 
@@ -405,52 +308,37 @@
         <div class="icon">⚠️</div>
         <div>
           <strong id="safetyTitle">Safety Mode Active</strong>
-          <div id="safetyMessage">Contactors have been turned off for safety reasons</div>
+          <div id="safetyMessage">Relays have been turned off for safety reasons</div>
         </div>
       </div>
       <div id="safetyTimer">Auto-reset in: <span id="safetyCountdown">--:--</span></div>
     </div>
 
-    <div class="card-grid">
-      <div class="info-card">
-        <h3><i class="fas fa-info-circle"></i> System Info</h3>
-        <p><strong>DTMS:</strong> Dynamic Transfer Monitoring System</p>
-        <p><strong>LP:</strong> Lightning Protection System</p>
-        <p><strong>LOTO:</strong> Lockout-Tagout with RFID Authentication</p>
+    <section class="status-cards">
+      <div class="card" id="relay1Card">
+        <h2>Relay 1</h2>
+        <p id="relay1State"><span class="status-indicator status-off"></span>Loading...</p>
       </div>
-      
-      <div class="info-card">
-        <h3><i class="fas fa-history"></i> Recent Activity</h3>
-        <p id="recentActivity">System initialized and ready</p>
-        <p id="rfidStatus">No RFID tags scanned recently</p>
+      <div class="card" id="relay2Card">
+        <h2>Relay 2</h2>
+        <p id="relay2State"><span class="status-indicator status-off"></span>Loading...</p>
       </div>
-    </div>
-
-    <section class="system-status">
-      <div class="status-card" id="contactor1Card">
-        <h2><i class="fas fa-plug"></i> Primary Contactor</h2>
-        <p id="contactor1State"><span class="status-indicator status-off"></span>Loading...</p>
-      </div>
-      <div class="status-card" id="contactor2Card">
-        <h2><i class="fas fa-plug"></i> Secondary Contactor</h2>
-        <p id="contactor2State"><span class="status-indicator status-off"></span>Loading...</p>
-      </div>
-      <div class="status-card" id="lockCard">
-        <h2><i class="fas fa-lock"></i> Lock Relay</h2>
+      <div class="card" id="lockCard">
+        <h2>Lock Relay</h2>
         <p id="lockState"><span class="status-indicator status-off"></span>Loading...</p>
       </div>
-      <div class="status-card" id="noiseCard">
-        <h2><i class="fas fa-volume-up"></i> Noise Level</h2>
+      <div class="card" id="noiseCard">
+        <h2>Noise Level</h2>
         <p id="noiseLevel"><span class="status-indicator status-normal"></span>Loading...</p>
       </div>
-      <div class="status-card" id="lightningCard">
-        <h2><i class="fas fa-bolt"></i> Lightning Protection</h2>
+      <div class="card" id="lightningCard">
+        <h2>Lightning</h2>
         <p id="lightningState"><span class="status-indicator status-off"></span>Loading...</p>
       </div>
     </section>
 
     <section class="events-section">
-      <h2><i class="fas fa-history"></i> Event Logs</h2>
+      <h2>Event Logs</h2>
       <div class="events-table">
         <table>
           <thead>
@@ -458,8 +346,8 @@
               <th>Timestamp</th>
               <th>RFID Tag</th>
               <th>Action</th>
-              <th>Primary Contactor</th>
-              <th>Secondary Contactor</th>
+              <th>Relay 1</th>
+              <th>Relay 2</th>
               <th>Lock Relay</th>
               <th>Noise</th>
               <th>Lightning</th>
@@ -474,50 +362,32 @@
 
     <div class="connection-status">
       <span class="connection-dot connected" id="connectionDot"></span>
-      <span id="connectionStatus">Connected to Monitoring System</span>
+      <span id="connectionStatus">Connected to Firebase</span>
     </div>
   </main>
 
   <footer>
-    <p>© 2025 SPS PROJECT HUB | Smart DTMS & Lightning Protection System</p>
+    <p>© 2025 SPS PROJECT HUB | Smart Relay Monitoring System</p>
   </footer>
 
   <script type="module">
-    // Simulated data for demonstration purposes
-    const simulateData = {
-      events: {
-        event1: {
-          timestamp: Date.now() / 1000 - 60,
-          last_rfid_tag: "4E00233F92C0",
-          action: "TNEB turned ON system",
-          relay1: "ON",
-          relay2: "ON",
-          lock_relay: "OFF",
-          noise_floor: 2,
-          lightning: "NO"
-        },
-        event2: {
-          timestamp: Date.now() / 1000 - 30,
-          last_rfid_tag: "SYSTEM",
-          action: "Noise warning - contactors OFF",
-          relay1: "ON",
-          relay2: "ON",
-          lock_relay: "OFF",
-          noise_floor: 5,
-          lightning: "NO"
-        },
-        event3: {
-          timestamp: Date.now() / 1000,
-          last_rfid_tag: "SYSTEM",
-          action: "Noise normalized - contactors restored",
-          relay1: "ON",
-          relay2: "ON",
-          lock_relay: "OFF",
-          noise_floor: 2,
-          lightning: "NO"
-        }
-      }
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDoQ0KrB6B2FHHaz4udbX9q5eURmrnqROI",
+      authDomain: "dtms-6485f.firebaseapp.com",
+      databaseURL: "https://dtms-6485f-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "dtms-6485f",
+      storageBucket: "dtms-6485f.appspot.com",
+      messagingSenderId: "113375753382",
+      appId: "1:113375753382:web:98046f838c994ae41eb067"
     };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const eventsRef = ref(db, 'events');
 
     // Track safety status
     let safetyActive = false;
@@ -546,7 +416,7 @@
 
     // Function to format timestamp correctly
     function formatTimestamp(timestamp) {
-      // Check if timestamp is in seconds and convert to milliseconds
+      // Check if timestamp is in seconds (from ESP32) and convert to milliseconds
       const adjustedTimestamp = timestamp < 10000000000 ? timestamp * 1000 : timestamp;
       
       const date = new Date(adjustedTimestamp);
@@ -568,19 +438,19 @@
     // Update safety status display
     function updateSafetyStatus(active, reason = "", endTime = 0) {
       const safetyElement = document.getElementById('safetyStatus');
-      const contactor1Card = document.getElementById('contactor1Card');
-      const contactor2Card = document.getElementById('contactor2Card');
+      const relay1Card = document.getElementById('relay1Card');
+      const relay2Card = document.getElementById('relay2Card');
       const lockCard = document.getElementById('lockCard');
       
       if (active) {
         safetyElement.style.display = 'flex';
         safetyElement.className = reason === 'lightning' ? 'safety-status danger' : 'safety-status warning';
         document.getElementById('safetyTitle').textContent = reason === 'lightning' ? 'Lightning Detected!' : 'High Noise Level!';
-        document.getElementById('safetyMessage').textContent = 'Contactors have been turned off for safety';
+        document.getElementById('safetyMessage').textContent = 'All relays have been turned off for safety';
         
-        // Add safety indicator to contactor cards
-        contactor1Card.classList.add('safety-active');
-        contactor2Card.classList.add('safety-active');
+        // Add safety indicator to relay cards
+        relay1Card.classList.add('safety-active');
+        relay2Card.classList.add('safety-active');
         lockCard.classList.add('safety-active');
         
         // Start countdown if we have an end time
@@ -593,9 +463,9 @@
       } else {
         safetyElement.style.display = 'none';
         
-        // Remove safety indicator from contactor cards
-        contactor1Card.classList.remove('safety-active');
-        contactor2Card.classList.remove('safety-active');
+        // Remove safety indicator from relay cards
+        relay1Card.classList.remove('safety-active');
+        relay2Card.classList.remove('safety-active');
         lockCard.classList.remove('safety-active');
         
         // Clear countdown
@@ -624,8 +494,8 @@
       }
     }
 
-    // Function to update the dashboard with data
-    function updateDashboard(data) {
+    onValue(eventsRef, (snapshot) => {
+      const data = snapshot.val();
       const eventsBody = document.getElementById('eventsBody');
       eventsBody.innerHTML = '';
 
@@ -648,15 +518,15 @@
       const isSafetyEvent = latestEvent.action.includes('Noise warning') || 
                            latestEvent.action.includes('Lightning detected');
       
-      // Determine actual contactor states (may be overridden by safety)
-      let actualContactor1 = latestEvent.relay1;
-      let actualContactor2 = latestEvent.relay2;
+      // Determine actual relay states (may be overridden by safety)
+      let actualRelay1 = latestEvent.relay1;
+      let actualRelay2 = latestEvent.relay2;
       let actualLockRelay = latestEvent.lock_relay;
       
-      // If this is a safety event, override the contactor states to OFF
+      // If this is a safety event, override the relay states to OFF
       if (isSafetyEvent) {
-        actualContactor1 = 'OFF';
-        actualContactor2 = 'OFF';
+        actualRelay1 = 'OFF';
+        actualRelay2 = 'OFF';
         actualLockRelay = 'OFF';
         
         // Calculate when safety mode should end (5 seconds from event timestamp)
@@ -673,20 +543,16 @@
         updateSafetyStatus(false);
       }
       
-      // Update recent activity
-      document.getElementById('recentActivity').textContent = `Last action: ${latestEvent.action}`;
-      document.getElementById('rfidStatus').textContent = `Last RFID: ${latestEvent.last_rfid_tag}`;
-      
       // Update display with actual states
-      document.getElementById('contactor1State').innerHTML = `<span class="status-indicator"></span>${actualContactor1 || 'N/A'}`;
-      document.getElementById('contactor2State').innerHTML = `<span class="status-indicator"></span>${actualContactor2 || 'N/A'}`;
+      document.getElementById('relay1State').innerHTML = `<span class="status-indicator"></span>${actualRelay1 || 'N/A'}`;
+      document.getElementById('relay2State').innerHTML = `<span class="status-indicator"></span>${actualRelay2 || 'N/A'}`;
       document.getElementById('lockState').innerHTML = `<span class="status-indicator"></span>${actualLockRelay || 'N/A'}`;
       document.getElementById('noiseLevel').innerHTML = `<span class="status-indicator"></span>${latestEvent.noise_floor || 'N/A'}`;
       document.getElementById('lightningState').innerHTML = `<span class="status-indicator"></span>${latestEvent.lightning || 'N/A'}`;
       
       // Update status indicators
-      updateStatusIndicator('contactor1State', actualContactor1);
-      updateStatusIndicator('contactor2State', actualContactor2);
+      updateStatusIndicator('relay1State', actualRelay1);
+      updateStatusIndicator('relay2State', actualRelay2);
       updateStatusIndicator('lockState', actualLockRelay);
       updateStatusIndicator('noiseLevel', latestEvent.noise_floor);
       updateStatusIndicator('lightningState', latestEvent.lightning);
@@ -709,14 +575,14 @@
           row.classList.add('event-row', 'safety-event');
         }
         
-        // For safety events, show the actual contactor state (OFF) instead of intended state
-        let displayContactor1 = event.relay1;
-        let displayContactor2 = event.relay2;
+        // For safety events, show the actual relay state (OFF) instead of intended state
+        let displayRelay1 = event.relay1;
+        let displayRelay2 = event.relay2;
         let displayLockRelay = event.lock_relay;
         
         if (isSafetyRow && (event.action.includes('Noise warning') || event.action.includes('Lightning detected'))) {
-          displayContactor1 = 'OFF';
-          displayContactor2 = 'OFF';
+          displayRelay1 = 'OFF';
+          displayRelay2 = 'OFF';
           displayLockRelay = 'OFF';
         }
         
@@ -724,8 +590,8 @@
           <td>${formattedDate}</td>
           <td>${event.last_rfid_tag || 'N/A'}</td>
           <td>${event.action || 'N/A'}</td>
-          <td>${displayContactor1 || 'N/A'}</td>
-          <td>${displayContactor2 || 'N/A'}</td>
+          <td>${displayRelay1 || 'N/A'}</td>
+          <td>${displayRelay2 || 'N/A'}</td>
           <td>${displayLockRelay || 'N/A'}</td>
           <td>${event.noise_floor || 'N/A'}</td>
           <td>${event.lightning || 'N/A'}</td>
@@ -738,35 +604,15 @@
       
       // Update connection status
       document.getElementById('connectionDot').className = 'connection-dot connected';
-      document.getElementById('connectionStatus').textContent = 'Connected to Monitoring System';
-    }
-
-    // Initialize the dashboard with simulated data
-    updateDashboard(simulateData.events);
-
-    // Simulate real-time updates
-    setInterval(() => {
-      // Add a new random event occasionally
-      if (Math.random() > 0.7) {
-        const newEvent = {
-          timestamp: Date.now() / 1000,
-          last_rfid_tag: Math.random() > 0.5 ? "4E00233F92C0" : "4E0023287431",
-          action: Math.random() > 0.5 ? "RFID access granted" : "System status check",
-          relay1: Math.random() > 0.3 ? "ON" : "OFF",
-          relay2: Math.random() > 0.3 ? "ON" : "OFF",
-          lock_relay: Math.random() > 0.7 ? "ON" : "OFF",
-          noise_floor: Math.floor(Math.random() * 7),
-          lightning: Math.random() > 0.9 ? "YES" : "NO"
-        };
-        
-        // Add to simulated data
-        const newKey = 'event' + (Object.keys(simulateData.events).length + 1);
-        simulateData.events[newKey] = newEvent;
-        
-        // Update dashboard
-        updateDashboard(simulateData.events);
-      }
-    }, 5000);
+      document.getElementById('connectionStatus').textContent = 'Connected to Firebase';
+    }, (error) => {
+      console.error("Firebase error:", error);
+      document.getElementById('eventsBody').innerHTML = '<tr><td colspan="8">Error loading data. Please check console.</td></tr>';
+      
+      // Update connection status
+      document.getElementById('connectionDot').className = 'connection-dot disconnected';
+      document.getElementById('connectionStatus').textContent = 'Disconnected from Firebase';
+    });
 
     // Update time every minute
     setInterval(updateLastUpdateTime, 60000);
